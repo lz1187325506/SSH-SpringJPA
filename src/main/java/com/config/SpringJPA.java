@@ -2,10 +2,8 @@ package com.config;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.persistence.SharedCacheMode;
-
-import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.tomcat.jdbc.pool.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -29,27 +27,27 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableJpaRepositories("com.hibernate.dao")
 @EnableTransactionManagement
-@ComponentScan(basePackages={"com.spring.service"})
+@ComponentScan("com.spring.service")
 @PropertySource("classpath:dbsource.properties")
 public class SpringJPA  {
     public SpringJPA () {}
     @Autowired
     Environment env; 
-    @Bean(destroyMethod="close")
-    public BasicDataSource dataSource(){
 
-        BasicDataSource datasource = new BasicDataSource();
+    //Tomcat JDBC Pool
+    @Bean(destroyMethod="close")
+    public DataSource dataSource(){
+        DataSource datasource = new DataSource();
         datasource.setDriverClassName(env.getProperty("db.Driver"));
         datasource.setUrl(env.getProperty("db.Url"));
         datasource.setUsername(env.getProperty("db.Username"));
         datasource.setPassword(env.getProperty("db.Password"));
-        datasource.setMaxWaitMillis(Long.parseLong(env.getProperty("db.MaxWaitMillis")));
-        datasource.setMaxTotal(Integer.parseInt(env.getProperty("db.MaxTotal")));
-        datasource.setMinIdle(Integer.parseInt(env.getProperty("db.MinTotal")));
-        datasource.setDefaultAutoCommit(false);
-        
+        datasource.setMaxIdle(Integer.parseInt(env.getProperty("db.MaxIdle")));
+        datasource.setMinIdle(Integer.parseInt(env.getProperty("db.MinIdle")));
         return datasource;
     }
+
+    //实例管理器，继承了Hibernate，替代了Hibernate的SessionFactory
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 
@@ -60,7 +58,6 @@ public class SpringJPA  {
         factory.setJpaVendorAdapter(vendorAdapter);
         factory.setLoadTimeWeaver(new InstrumentationLoadTimeWeaver());
         factory.setDataSource(dataSource());
-        
 
         //包扫描，参数可以是一个数组,或者多个字符串
         factory.setPackagesToScan("com.hibernate.model");
@@ -75,9 +72,9 @@ public class SpringJPA  {
         return factory;
       }
     
+      //事务管理器
       @Bean
       public PlatformTransactionManager transactionManager() {
-    
         JpaTransactionManager txManager = new JpaTransactionManager();
         txManager.setDataSource(dataSource());
         txManager.setEntityManagerFactory(entityManagerFactory().getObject());

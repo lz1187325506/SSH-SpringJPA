@@ -19,12 +19,12 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
 
 	@Override
 	protected Class<?>[] getRootConfigClasses() {
-		return new Class<?>[] {SpringJPA.class,SpringMVC.class};
+		return new Class<?>[] {SpringJPA.class};
 	}
 
 	@Override
 	protected Class<?>[] getServletConfigClasses() {
-		return new Class<?>[] {};
+		return new Class<?>[] {SpringMVC.class};
 	}
 
 	@Override
