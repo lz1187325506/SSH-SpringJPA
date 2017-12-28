@@ -1,0 +1,3 @@
+框架已经完成调试，实现了完整的ssh功能，利用spring data jpa的快速crud，节省了编辑的时间
+准备了两套配置一套是基于xml的，一套是基于javaconfig，目前根据spring的发展趋势，javaconfig将成为主流，所以默认使用javaconfig
+javaconfig的起始配置是 WebConfig.java,其他配置在config包中
