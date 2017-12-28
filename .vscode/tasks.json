@@ -1,0 +1,69 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "startTomcat",
+			"type": "shell",
+			"command": "./startup.bat",
+			"group": "test",
+			"options": {
+				"cwd": "D:/Document/VScode/TomcatServer",
+				"env": {
+					"JAVA_TOOL_OPTIONS":"-Dfile.encoding=UTF8 -Dsun.jnu.encoding=UTF8 -Dsun.stdout.encoding=UTF8"
+				}
+
+			}
+		},
+		{
+			"label": "stopTomcat",
+			"type": "shell",
+			"command": "./shutdown.bat",
+			"group": "test",
+			"options": {
+				"cwd": "D:/Document/VScode/TomcatServer"
+			},
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "debugTomcat",
+			"type": "shell",
+			"command": "./startup_debug.bat",
+			"group": "test",
+			"options": {
+				"cwd": "D:/Document/VScode/TomcatServer",
+				"env": {
+					"JAVA_TOOL_OPTIONS":"-Dfile.encoding=UTF8 -Dsun.jnu.encoding=UTF8 -Dsun.stdout.encoding=UTF8"
+				}
+			}
+		},
+		{
+			"label": "Tomcat+Xreble",
+			"type": "shell",
+			"command": "./startXrebel.bat",
+			"group": "test",
+			"options": {
+				"cwd": "D:/Document/VScode/TomcatServer",
+				"env": {
+					"JAVA_TOOL_OPTIONS":"-Dfile.encoding=UTF8 -Dsun.jnu.encoding=UTF8 -Dsun.stdout.encoding=UTF8"
+				}
+			}
+		},
+		{
+			"label": "deploy lib",
+			"type": "shell",
+			"command": "mvn",
+			"args": [
+				"dependency:copy-dependencies",
+				"-DoutputDirectory=WebContext/WEB-INF/lib",
+				"-DincludeScope=runtime"
+			],
+			"group": "build",
+			"problemMatcher": []
+		}
+	]
+}

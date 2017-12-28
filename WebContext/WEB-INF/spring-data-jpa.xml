@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/data/jpa
+        http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+   
+
+    <!-- DBCP datasource -->
+	<bean id="myDataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close"	>
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/springmvc?useSSL=false&amp;characterEncoding=utf8" />
+		<property name="username" value="root" />
+		<property name="password" value="123456" />
+		<property name="defaultAutoCommit" value="false" />
+	</bean>
+
+
+    <!-- JPA Entity Mananger -->
+    <bean id="myEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="myDataSource"/>
+		<property name="loadTimeWeaver">
+			<bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver"/>
+		</property>
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                <property name ="generateDdl" value ="true" />
+            </bean>
+        </property>
+        <!-- Model Scan -->
+        <property name="packagesToScan">
+            <list>
+                <value>com.hibernate.model</value>
+            </list>
+        </property>
+		 <property name="jpaProperties">  
+            <props>  
+                <prop key="hibernate.hbm2ddl.auto">update</prop>  
+                  
+                <prop key="hibernate.format_sql">true</prop>  
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL57InnoDBDialect</prop>  
+            </props>  
+        </property>  
+		<property name="sharedCacheMode" value="ENABLE_SELECTIVE"/>
+    </bean>
+
+    <!--Jpa Transaction Manager -->
+	<bean id="myTxManager"	class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="myEntityManagerFactory" />
+	</bean>
+	<tx:annotation-driven transaction-manager="myTxManager" />
+
+    <!-- Jpa Reopsitory Scan -->
+    <jpa:repositories base-package="com.hibernate.dao"  transaction-manager-ref="myTxManager" entity-manager-factory-ref="myEntityManagerFactory"/>
+	
+	
+
+</beans>
